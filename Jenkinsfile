@@ -42,14 +42,16 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    	echo "Building docker images..."
-			docker.Image = docker.build("${env.DOCKER_IMAGE}"${env.BUILD_ID}")
-                    }
-                }
-            }
-        }
-
+		script {
+          		echo "Building docker images..."
+                	sh '''
+				eval $(minikube docker-env)
+				docker build -t ${DOCKER_IMAGE}
+				'''
+				}	
+            		}
+        	}
+	}
         stage('Deploy to Kubernetes') {
             steps {
                 script {
