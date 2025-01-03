@@ -1,26 +1,26 @@
+def color_map = [
+	'SUCCESS' : 'good',
+	'FAILURE' : 'danger',
+]
 pipeline {
     agent any
-	tools {
-		maven "MAVEN3.9"
-		jdk "JDK17"
-		nodejs "NODEJS"
-	}
     environment {
         DOCKER_IMAGE = "abhimanyuu18/nodejs-app:0.0.1"
-        KUBE_CONFIG = credentials('kubeconfig-credential-id')
+        KUBE_CONFIG = credentials('')
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-		
-                git branch: 'master', url: 'https://github.com/abhimanyusingh18/nodejs_app.git'
+		echo "Checking for SCM..."
+		checkout scm
             }
         }
 
         stage('Installing Dependencies') {
             steps {
-                sh 'npm install'
+		echo "Installing dependencies..."
+                sh 'sudo apt install npm'
             }
         }
 
@@ -28,16 +28,23 @@ pipeline {
             steps {
 		script{
 			dockerImage.inside {
-                		sh 'npm test'
+                		echo " Running tests..."
+				sh 'npm test'
             			}
 			}	
         	}
+	}
+	stage('Build'){
+        	steps  {
+			sh 'npm run build'
+		}
 	}
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.Image = docker.build("${env.DOCKER_IMAGE}"${env.BUILD_ID}")
+                    	echo "Building docker images..."
+			docker.Image = docker.build("${env.DOCKER_IMAGE}"${env.BUILD_ID}")
                     }
                 }
             }
@@ -46,10 +53,9 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withEnv(["KUBECONFIG=${env.KUBE_CONFIG}"]) {
                         sh '''
-                        kubectl set image deployment/nodejs-app nodejs-app=${DOCKER_IMAGE}
-                        kubectl rollout status deployment/nodejs-app
+                        kubectl apply -f deploymennt.yaml
+                        kubectl rollout status deployment/nodejs_app
                         '''
                     }
                 }
@@ -58,16 +64,9 @@ pipeline {
     }
 
     post {
-        success {
-            echo 'Deployment Successful!'
-            // Replace with your notification method
-            slackSend(channel: '#deployments', color: 'good', message: 'Deployment successful for Node.js app!')
-        }
-
-        failure {
-            echo 'Deployment Failed!'
-            // Replace with your notification method
-            slackSend(channel: '#deployments', color: 'danger', message: 'Deployment failed for Node.js app!')
+        always {
+            echo 'Deployment Status!'
+            slackSend(channel: '#better-slack-notification', color: COLOR_MAP[currentBuild.currentResult], message: 'Deployment status for Node.js app!')
         }
     }
 }
