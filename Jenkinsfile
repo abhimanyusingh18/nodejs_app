@@ -5,7 +5,7 @@ def color_map = [
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = "abhimanyuu18/nodejs-app:0.0.1"
+        DOCKER_IMAGE = "abhimanyuu18/nodejs_app:0.0.1"
         KUBE_CONFIG = credentials('')
     }
 
