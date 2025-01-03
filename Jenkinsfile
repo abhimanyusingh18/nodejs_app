@@ -1,7 +1,7 @@
 pipeline {
     agent any
 	environment {
-		ROOT_PASSWORD = credentials('rootpass')
+		ROOT_PASSWORD = '12345678'
 	}
     stages {
         stage('Checkout Code') {
