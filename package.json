@@ -1,0 +1,18 @@
+{
+  "name": "nodejs_app",
+  "version": "0.0.1",
+  "description": "A simple Hello World application for Better!",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "echo 'Runninng Build Script...'"
+  },
+  "author": "Abhimanyu Singh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "mocha": "^11.0.1"
+  }
+}
