@@ -12,7 +12,7 @@ pipeline {
 
         stage('Installing Dependencies') {
             steps {
-                sh 'echo $ROOT_PASSWORD | sudo -S apt install npm'
+                sh 'sudo apt install npm'
             }
         }
 
