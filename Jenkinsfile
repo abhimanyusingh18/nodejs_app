@@ -70,5 +70,5 @@ pipeline {
             slackSend(channel: '#better-slack-notification', color: COLOR_MAP[currentBuild.currentResult], message: 'Deployment status for Node.js app!')
         }
     }
-}
+
 
