@@ -1,5 +1,8 @@
 pipeline {
     agent any
+	environment {
+		ROOT_PASSWORD = credentials('rootpass')
+	}
     stages {
         stage('Checkout Code') {
             steps {
@@ -9,7 +12,7 @@ pipeline {
 
         stage('Installing Dependencies') {
             steps {
-                sh 'sudo -S apt install npm'
+                sh 'echo $ROOT_PASSWORD | sudo -S apt install npm'
             }
         }
 
