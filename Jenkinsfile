@@ -6,9 +6,8 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = "abhimanyuu18/nodejs-app:0.0.1"
-        KUBE_CONFIG = credentials('')
+        KUBE_CONFIG = credentials('~/.kube/config')
     }
-
     stages {
         stage('Checkout Code') {
             steps {
@@ -54,8 +53,9 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                        sh '''
-                        kubectl apply -f deploymennt.yaml
+                        echo "Deploying to Kubernetes"
+			sh '''
+                        kubectl apply -f deployment.yaml
                         kubectl rollout status deployment/nodejs_app
                         '''
                     }
@@ -69,5 +69,3 @@ pipeline {
             slackSend(channel: '#better-slack-notification', color: COLOR_MAP[currentBuild.currentResult], message: 'Deployment status for Node.js app!')
         }
     }
-
-
